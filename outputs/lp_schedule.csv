@@ -1,0 +1,7 @@
+patient,doctor,slot,emergency
+P1,D1,1,0
+P2,D3,1,0
+P3,D2,0,1
+P4,D1,0,0
+P5,D3,0,0
+P6,D2,1,0

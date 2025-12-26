@@ -1,0 +1,79 @@
+/* -------------------------------
+   BACKGROUND
+--------------------------------*/
+.page-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url('https: //www.bing.com/images/search?view=detailV2&ccid=Q%2bxGWVup&id=3CBD4EFD4A634B18C5B4C5440074959AAB198EF0&thid=OIP.Q-xGWVupmKdUTA3e80ATIAHaE7&mediaurl=https%3a%2f%2fimg.freepik.com%2fpremium-photo%2fblurred-interior-hospital-clinical-with-people-abstract-medical-background_1036687-4720.jpg&exph=417&expw=626&q=hospital+background+blurred+image+people+in+queqe&FORM=IRPRST&ck=763ADCE88FA1CD1497440DDDE459A618&selectedIndex=12&itb=0');
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px) brightness(0.9);
+}
+
+/* -------------------------------
+   NAVBAR
+--------------------------------*/
+.glass-nav {
+    background: rgba(0, 88, 160, 0.75) !important;
+    backdrop-filter: blur(12px);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* -------------------------------
+   GLASS CARDS & BUTTONS
+--------------------------------*/
+.glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+.glass-btn {
+    border-radius: 10px;
+    transition: 0.25s;
+}
+
+.glass-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* --------PREVIEW BOXES
+--------------------------------*/
+.preview-box {
+    max-height: 250px;
+    overflow-y: auto;
+    background: rgba(240, 248, 255, 0.7);
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* LOGIN PAGE */
+.login-body {
+    background: ("C:\Users\Hitesh\OneDrive\Desktop\docline.maththon.jpeg");
+    background-size: cover;
+    background-position: center;
+    backdrop-filter: blur(5px);
+}
+
+.login-container {
+    width: 380px;
+    margin: 100px auto;
+    border-radius: 18px;
+}

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DocLine – Hospital Scheduler</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="page-background"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold fs-3" href="#">
+                <i class="fa-solid fa-hospital"></i> DocLine Dashboard
+            </a>
+
+            <div class="ms-auto">
+                <a href="/logout" class="btn btn-danger glass-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4 mb-5">
+        <div class="row">
+
+            <!-- LEFT SIDEBAR -->
+            <div class="col-lg-3">
+                <div class="sidebar glass-card p-4">
+
+                    <h4 class="fw-bold mb-3"><i class="fa-solid fa-sliders"></i> Controls</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Doctors Available</label>
+                        <input type="number" class="form-control" id="num_doctors" min="1" max="20" value="3">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Arrival Rate λ</label>
+                        <input type="number" step="0.01" class="form-control" id="lam" value="0.20">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Service Rate μ</label>
+                        <input type="number" step="0.01" class="form-control" id="mu" value="0.0833">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Simulation Time (min)</label>
+                        <input type="number" class="form-control" id="sim_time" value="480">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Upload Patient CSV</label>
+                        <input class="form-control" type="file" id="csvFile" accept=".csv">
+                    </div>
+
+                    <button id="btnGreedy" class="btn btn-primary w-100 mt-2 glass-btn">
+                        <i class="fa-solid fa-brain"></i> Run Greedy Simulation
+                    </button>
+
+                    <button id="btnLP" class="btn btn-success w-100 mt-2 glass-btn">
+                        <i class="fa-solid fa-robot"></i> Run LP Optimizer
+                    </button>
+
+                    <button id="btnHybrid" class="btn btn-warning w-100 mt-2 glass-btn">
+                        <i class="fa-solid fa-bolt"></i> Run Hybrid Scheduler
+                    </button>
+
+                    <div id="statusBox" class="mt-4"></div>
+                </div>
+            </div>
+
+            <!-- RIGHT SECTION -->
+            <div class="col-lg-9">
+                <div class="row" id="resultCards"></div>
+
+                <div class="glass-card p-4 mt-4">
+                    <h4 class="fw-bold mb-3"><i class="fa-solid fa-table"></i> LP Schedule Preview</h4>
+                    <pre id="schedulePreview" class="preview-box"></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // STATUS
+        function setStatus(html) {
+            document.getElementById("statusBox").innerHTML = html;
+        }
+
+        // CARDS
+        function showResultCard(title, json) {
+            const row = document.getElementById("resultCards");
+            const card = document.createElement("div");
+            card.className = "col-md-6";
+            card.innerHTML = `
+    <div class="glass-card p-3 mb-3">
+        <h5 class="fw-bold">${title}</h5>
+     <pre class="preview-box">${JSON.stringify(json, null, 2)}</pre>
+    </div>`;
+            row.prepend(card);
+        }
+
+        async function postJson(url, data) {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            return await res.json();
+        }
+
+        async function uploadAndRunLP(file, num_doctors, slots = 8) {
+            const form = new FormData();
+            form.append("file", file);
+            form.append("num_doctors", num_doctors);
+            form.append("slots", slots);
+
+            const res = await fetch("/api/run_lp", {
+                method: "POST",
+                body: form
+            });
+            return await res.json();
+        }
+
+        // -------- BUTTON HANDLERS --------
+        document.getElementById("btnGreedy").addEventListener("click", async (e) => {
+            e.preventDefault();
+            setStatus('<div class="alert alert-info">Running Greedy Simulation...</div>');
+            const payload = {
+                num_doctors: +num_doctors.value,
+                lam: +lam.value,
+                mu: +mu.value,
+                sim_time: +sim_time.value
+            };
+            const json = await postJson("/api/run_greedy", payload);
+            setStatus('<div class="alert alert-success">Greedy Completed</div>');
+            showResultCard("Greedy Simulation", json.result);
+        });
+
+        document.getElementById("btnLP").addEventListener("click", async (e) => {
+            e.preventDefault();
+            const file = csvFile.files[0];
+            if (!file) {
+                setStatus('<div class="alert alert-warning">Upload a CSV first.</div>');
+                return;
+            }
+            setStatus('<div class="alert alert-info">Running LP Optimizer...</div>');
+            const json = await uploadAndRunLP(file, +num_doctors.value);
+            showResultCard("LP Optimization", json.schedule_preview);
+            schedulePreview.textContent = JSON.stringify(json.schedule_preview, null, 2);
+            setStatus('<div class="alert alert-success">LP Optimization Completed</div>');
+        });
+
+        document.getElementById("btnHybrid").addEventListener("click", async (e) => {
+            e.preventDefault();
+            setStatus('<div class="alert alert-info">Running Hybrid Scheduler...</div>');
+            const payload = {
+                num_doctors: +num_doctors.value,
+                lam: +lam.value,
+                mu: +mu.value,
+                sim_time: +sim_time.value
+            };
+            const json = await postJson("/api/run_hybrid", payload);
+            showResultCard("Hybrid Scheduler", json.result);
+            setStatus('<div class="alert alert-success">Hybrid Scheduler Completed</div>');
+        });
+    </script>
+
+</body>
+
+</html>

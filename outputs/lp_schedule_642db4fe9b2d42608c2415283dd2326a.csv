@@ -1,0 +1,6 @@
+patient,doctor,slot,emergency
+Alice,D3,0,0
+Bob,D1,0,1
+Charlie,D3,1,0
+Diana,D2,0,1
+Ethan,D1,1,0

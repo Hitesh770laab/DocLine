@@ -1,0 +1,6 @@
+name,service_time,emergency_flag
+Alice,30,False
+Bob,45,True
+Charlie,25,False
+Diana,60,True
+Ethan,35,False
