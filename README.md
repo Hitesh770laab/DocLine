@@ -27,7 +27,10 @@ Enable appointment booking without admin approval
 Secure admin panel for hospital management
 ## 🎥 Demo
 
-> 📌 Screenshots and demo GIF will be added soon.
+> 📌 Screenshots and demo GIF
+<img width="1876" height="891" alt="image" src="https://github.com/user-attachments/assets/80f0af50-5a27-4af7-ab53-ff58013cc83a" />
+<img width="1433" height="645" alt="Screenshot 2026-01-02 022549" src="https://github.com/user-attachments/assets/29cb7181-da7a-4329-b2ee-c2c0511867a5" />
+
 
 ### 🔐 Admin Dashboard
 - Login with animation
